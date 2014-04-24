@@ -6,10 +6,19 @@ module StaticPage
 end
 
 class Spree::StaticPage
-  def self.matches?(request)
-    slug = StaticPage::remove_spree_mount_point(request.fullpath)
-    pages = Spree::Page.arel_table
-    Spree::Page.visible.by_slug(slug).exists?
+
+  class << self
+
+    def matches? request
+      return false if request.path =~ /(^\/+(admin|account|cart|checkout|content|login|pg\/|orders|products|s\/|session|signup|shipments|states|t\/|tax_categories|user)+)/
+      Spree::Page.visible.find_by_slug(extract_slug_from_path(request.path)).exists?
+    end
+
+    def extract_slug_from_path path
+      path.split('/').reject do |part|
+        part.blank? || I18n.available_locales.include?(part)
+      end
+    end
   end
 end
 
