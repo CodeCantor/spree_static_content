@@ -4,3 +4,4 @@ nbproject
 Gemfile.lock
 spec/dummy/
 *.iml
+.rakeTasks
